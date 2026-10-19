@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:nabzai/pages/authenticationPage.dart';
 
 // ============================================================
 // NABZ AI WELCOME SCREEN
@@ -181,7 +182,7 @@ class WelcomeScreen extends StatelessWidget {
                             const SizedBox(height: 9),
 
                             const _WelcomeFeatureCard(
-                              icon: Icons.calendar_month_rounded,
+                              icon: Icons.calendar_today_outlined,
                               title: 'نوبت‌گیری آنلاین',
                               subtitle:
                               'بدون تماس تلفونی، بدون نوبت دوباره',
@@ -204,6 +205,13 @@ class WelcomeScreen extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   // Add registration navigation here.
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const SignInScreen(),
+                                      ),
+                                    );
+
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: surface,
@@ -334,7 +342,7 @@ class _WelcomeFeatureCard extends StatelessWidget {
             child: Icon(
               icon,
               color: surface,
-              size: 22,
+              size: 18,
             ),
           ),
 
