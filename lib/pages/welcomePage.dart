@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 // ============================================================
 // NABZ AI WELCOME SCREEN
-// Keeps NabzLogo public so splash_screen.dart can use it.
+// Responsive, non-scrollable layout.
+// Keeps NabzLogo public for splash_screen.dart.
 // ============================================================
 
 // Official NABZ AI brand palette.
@@ -35,9 +36,9 @@ class WelcomeScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF168F81),
-              Color(0xFF0D766B),
-              Color(0xFF084F49),
+              Color(0xFF0D7D70),
+              Color(0xFF0A635A),
+              Color(0xFF063F3A),
             ],
             stops: [0.0, 0.52, 1.0],
           ),
@@ -45,223 +46,238 @@ class WelcomeScreen extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Available height inside the phone's safe area.
               final double screenHeight = constraints.maxHeight;
               final double screenWidth = constraints.maxWidth;
 
-              // Short screens use tighter spacing and smaller elements.
-              final bool compact = screenHeight < 780;
-              final bool veryCompact = screenHeight < 680;
+              final double sidePadding =
+              screenWidth < 360 ? 18 : 24;
 
-              final double logoSize = veryCompact
-                  ? 88
-                  : compact
-                  ? 100
-                  : 120;
+              final double availableWidth =
+                  screenWidth - (sidePadding * 2);
 
-              final double sidePadding = screenWidth < 360 ? 18 : 24;
+              // Keep some space above and below the content.
+              final double verticalPadding =
+              screenHeight < 670 ? 6 : 14;
 
-              return SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  sidePadding,
-                  compact ? 8 : 18,
-                  sidePadding,
-                  compact ? 10 : 16,
+              final double availableHeight =
+              (screenHeight - verticalPadding * 2)
+                  .clamp(0.0, double.infinity)
+                  .toDouble();
+
+              // Center the design on tall screens.
+              // Scale it down automatically when the screen
+              // is too short. No scrolling is used.
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: sidePadding,
+                  vertical: verticalPadding,
                 ),
-                child: ConstrainedBox(
-                  // Fill the available height when possible.
-                  // Allow scrolling on genuinely short screens.
-                  constraints: BoxConstraints(
-                    minHeight: (screenHeight -
-                        (compact ? 18 : 34))
-                        .clamp(0.0, double.infinity),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 1. LOGO
-                      Container(
-                        width: logoSize,
-                        height: logoSize,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: surface,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
-                              blurRadius: 22,
-                              offset: const Offset(0, 7),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: availableHeight,
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: availableWidth,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 1. LOGO
+                            Container(
+                              width: 106,
+                              height: 106,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: surface,
+                                borderRadius:
+                                BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF001F1C)
+                                        .withValues(alpha: 0.32),
+                                    blurRadius: 28,
+                                    spreadRadius: 3,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: const NabzLogo(size: 86),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // 2. MAIN DARI TITLE
+                            const Text(
+                              'نبض هوشمند',
+                              textAlign: TextAlign.center,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: dariFont,
+                                fontSize: 30,
+                                fontWeight: FontWeight.w800,
+                                color: surface,
+                                height: 1.35,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // 3. ENGLISH BRAND NAME
+                            const Text(
+                              'NABZ AI',
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                fontFamily: englishFont,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: primarySoft,
+                                letterSpacing: 3.0,
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            // 4. INTRODUCTION
+                            const Text(
+                              'خدمات صحی، نزدیک‌تر به شما.',
+                              textAlign: TextAlign.center,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: dariFont,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                color: primaryTint,
+                                height: 1.6,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // 5. DESCRIPTION
+                            const Text(
+                              'داکتران، کلینیک‌ها و شفاخانه‌های تأییدشده را پیدا کنید و آنلاین نوبت بگیرید.',
+                              textAlign: TextAlign.center,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: dariFont,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: primarySoft,
+                                height: 1.65,
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            // 6. FEATURE CARDS
+                            const _WelcomeFeatureCard(
+                              icon: Icons.search_rounded,
+                              title: 'جستجوی داکتر تأییدشده',
+                              subtitle: '۱۹ داکتر در ۶ ولایت',
+                            ),
+
+                            const SizedBox(height: 9),
+
+                            const _WelcomeFeatureCard(
+                              icon: Icons.calendar_month_rounded,
+                              title: 'نوبت‌گیری آنلاین',
+                              subtitle:
+                              'بدون تماس تلفونی، بدون نوبت دوباره',
+                            ),
+
+                            const SizedBox(height: 9),
+
+                            const _WelcomeFeatureCard(
+                              icon: Icons.auto_awesome_rounded,
+                              title: 'دستیار هوشمند نبض',
+                              subtitle: 'علایم خود را مرتب کنید',
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            // 7. PRIMARY BUTTON
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Add registration navigation here.
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: surface,
+                                  foregroundColor: primaryDeep,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'شروع کنید',
+                                  style: TextStyle(
+                                    fontFamily: dariFont,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            // 8. SIGN-IN BUTTON
+                            SizedBox(
+                              width: double.infinity,
+                              height: 54,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  // Add sign-in navigation here.
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: surface,
+                                  side: BorderSide(
+                                    color: primarySoft.withValues(
+                                      alpha: 0.40,
+                                    ),
+                                    width: 1.2,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'قبلاً حساب دارم',
+                                  style: TextStyle(
+                                    fontFamily: dariFont,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            // 9. PRIVACY NOTE
+                            const Text(
+                              'با ادامه، شما شرایط استفاده و سیاست حفظ حریم خصوصی نبض هوشمند را می‌پذیرید.',
+                              textAlign: TextAlign.center,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: dariFont,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w400,
+                                color: primarySoft,
+                                height: 1.6,
+                              ),
                             ),
                           ],
                         ),
-                        child: NabzLogo(size: logoSize - 20),
                       ),
-
-                      SizedBox(height: compact ? 16 : 24),
-
-                      // 2. MAIN DARI TITLE
-                      Text(
-                        'نبض هوشمند',
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: dariFont,
-                          fontSize: compact ? 29 : 32,
-                          fontWeight: FontWeight.w800,
-                          color: surface,
-                          height: 1.35,
-                        ),
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      // 3. ENGLISH BRAND NAME
-                      const Text(
-                        'NABZ AI',
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          fontFamily: englishFont,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: primarySoft,
-                          letterSpacing: 3.0,
-                        ),
-                      ),
-
-                      SizedBox(height: compact ? 18 : 24),
-
-                      // 4. INTRODUCTION
-                      Text(
-                        'خدمات صحی، نزدیک‌تر به شما.',
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: dariFont,
-                          fontSize: compact ? 15 : 17,
-                          fontWeight: FontWeight.w600,
-                          color: primaryTint,
-                          height: 1.6,
-                        ),
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      // 5. DESCRIPTION
-                      Text(
-                        'داکتران، کلینیک‌ها و شفاخانه‌های تأییدشده را پیدا کنید و آنلاین نوبت بگیرید.',
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: dariFont,
-                          fontSize: compact ? 12 : 13,
-                          fontWeight: FontWeight.w400,
-                          color: primarySoft,
-                          height: 1.65,
-                        ),
-                      ),
-
-                      SizedBox(height: compact ? 18 : 24),
-
-                      // 6. FEATURE CARDS
-                      const _WelcomeFeatureCard(
-                        icon: Icons.search_rounded,
-                        title: 'جستجوی داکتر تأییدشده',
-                        subtitle: '۱۹ داکتر در ۶ ولایت',
-                      ),
-
-                      SizedBox(height: compact ? 8 : 10),
-
-                      const _WelcomeFeatureCard(
-                        icon: Icons.calendar_month_rounded,
-                        title: 'نوبت‌گیری آنلاین',
-                        subtitle: 'بدون تماس تلفونی، بدون نوبت دوباره',
-                      ),
-
-                      SizedBox(height: compact ? 8 : 10),
-
-                      const _WelcomeFeatureCard(
-                        icon: Icons.auto_awesome_rounded,
-                        title: 'دستیار هوشمند نبض',
-                        subtitle: 'علایم خود را مرتب کنید',
-                      ),
-
-                      SizedBox(height: compact ? 18 : 26),
-
-                      // 7. PRIMARY BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        height: compact ? 54 : 58,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Add registration navigation here later.
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: surface,
-                            foregroundColor: primaryDeep,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            'شروع کنید',
-                            style: TextStyle(
-                              fontFamily: dariFont,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // 8. SIGN-IN BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        height: compact ? 52 : 56,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            // Add sign-in navigation here later.
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: surface,
-                            side: BorderSide(
-                              color: primarySoft.withValues(alpha: 0.40),
-                              width: 1.2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            'قبلاً حساب دارم',
-                            style: TextStyle(
-                              fontFamily: dariFont,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // 9. PRIVACY NOTE
-                      Text(
-                        'با ادامه، شما شرایط استفاده و سیاست حفظ حریم خصوصی نبض هوشمند را می‌پذیرید.',
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: dariFont,
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w400,
-                          color: primarySoft.withValues(alpha: 0.78),
-                          height: 1.6,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               );
@@ -307,7 +323,7 @@ class _WelcomeFeatureCard extends StatelessWidget {
       child: Row(
         textDirection: TextDirection.rtl,
         children: [
-          // Icon on the right, as in the reference design.
+          // Icon on the right.
           Container(
             width: 44,
             height: 44,
@@ -367,7 +383,7 @@ class _WelcomeFeatureCard extends StatelessWidget {
 
 // ============================================================
 // SHARED LOGO
-// Keep this public class because splash_screen.dart uses it.
+// Keep this public class for splash_screen.dart.
 // Do not rename or remove this class.
 // ============================================================
 
